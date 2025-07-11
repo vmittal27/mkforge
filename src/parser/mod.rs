@@ -28,7 +28,7 @@ pub enum Flavor {
 
 impl Flavor {
     /// Returns a string representation of the flavor.
-    pub fn as_str(&self) -> &str {
+    pub fn as_string(&self) -> &str {
         match self {
             Flavor::CommonMark => "CommonMark",
             Flavor::GitHub => "GitHub Flavored Markdown",
@@ -36,7 +36,7 @@ impl Flavor {
     }
 
     /// Parses a string to return the corresponding Flavor enum.
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn from_string(s: &str) -> Option<Self> {
         match s {
             "CommonMark" => Some(Flavor::CommonMark),
             "GitHub" => Some(Flavor::GitHub),
@@ -76,6 +76,7 @@ impl Flavor {
 /// Markdown Parser is a container for holding
 /// the state needed for the parser,
 /// including the file path and parse options.
+#[allow(dead_code)]
 pub struct ParseConfig {
     options: ComrakOptions<'static>,
     flavor: Flavor,
@@ -116,16 +117,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_flavor_as_str() {
-        assert_eq!(Flavor::CommonMark.as_str(), "CommonMark");
-        assert_eq!(Flavor::GitHub.as_str(), "GitHub Flavored Markdown");
+    fn test_flavor_as_string() {
+        assert_eq!(Flavor::CommonMark.as_string(), "CommonMark");
+        assert_eq!(Flavor::GitHub.as_string(), "GitHub Flavored Markdown");
     }
 
     #[test]
-    fn test_flavor_from_str() {
-        assert_eq!(Flavor::from_str("CommonMark"), Some(Flavor::CommonMark));
-        assert_eq!(Flavor::from_str("GitHub"), Some(Flavor::GitHub));
-        assert_eq!(Flavor::from_str("Unknown"), None);
+    fn test_flavor_from_string() {
+        assert_eq!(Flavor::from_string("CommonMark"), Some(Flavor::CommonMark));
+        assert_eq!(Flavor::from_string("GitHub"), Some(Flavor::GitHub));
+        assert_eq!(Flavor::from_string("Unknown"), None);
     }
 
     #[test]
@@ -143,7 +144,7 @@ mod tests {
     fn test_parse_config_new() {
         let config = ParseConfig::new("test.md", Flavor::GitHub);
         assert_eq!(config.file_path, "test.md");
-        assert_eq!(config.flavor.as_str(), "GitHub Flavored Markdown");
+        assert_eq!(config.flavor.as_string(), "GitHub Flavored Markdown");
     }
 
     #[test]
