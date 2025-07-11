@@ -1,4 +1,3 @@
-pub use comrak::Arena;
 /**
  * ============================================================================
  * Markdown Parser Module
@@ -8,6 +7,7 @@ pub use comrak::Arena;
  * an Abstract Syntax Tree (AST) for further processing.
  * ============================================================================
 */
+pub use comrak::Arena;
 use comrak::nodes::AstNode;
 use comrak::{ComrakOptions, parse_document};
 use std::fs;
