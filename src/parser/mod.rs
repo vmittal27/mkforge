@@ -20,6 +20,7 @@ use std::io::Error;
 ///
 /// Specifications for each flavor are pulled from here:
 /// https://github.com/commonmark/commonmark-spec/wiki/markdown-flavors
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Flavor {
     CommonMark,
     GitHub,
@@ -108,4 +109,56 @@ pub fn extract_ast<'a>(
 
     // Return the AST
     Ok(ast)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_flavor_as_str() {
+        assert_eq!(Flavor::CommonMark.as_str(), "CommonMark");
+        assert_eq!(Flavor::GitHub.as_str(), "GitHub Flavored Markdown");
+    }
+
+    #[test]
+    fn test_flavor_from_str() {
+        assert_eq!(Flavor::from_str("CommonMark"), Some(Flavor::CommonMark));
+        assert_eq!(Flavor::from_str("GitHub"), Some(Flavor::GitHub));
+        assert_eq!(Flavor::from_str("Unknown"), None);
+    }
+
+    #[test]
+    fn test_flavor_to_options() {
+        let commonmark_options = Flavor::CommonMark.to_options();
+        assert!(!commonmark_options.extension.table);
+
+        let github_options = Flavor::GitHub.to_options();
+        assert!(github_options.extension.table);
+        assert!(github_options.extension.strikethrough);
+        assert!(github_options.render.github_pre_lang);
+    }
+
+    #[test]
+    fn test_parse_config_new() {
+        let config = ParseConfig::new("test.md", Flavor::GitHub);
+        assert_eq!(config.file_path, "test.md");
+        assert_eq!(config.flavor.as_str(), "GitHub Flavored Markdown");
+    }
+
+    #[test]
+    fn test_extract_ast() {
+        let arena = Arena::new();
+        let config = ParseConfig::new("test.md", Flavor::CommonMark);
+
+        // Create a temporary file with markdown content
+        let temp_file_path = "test.md";
+        std::fs::write(temp_file_path, "# Heading\n\nSome content.").unwrap();
+
+        let ast = extract_ast(&config, &arena);
+        assert!(ast.is_ok());
+
+        // Clean up the temporary file
+        std::fs::remove_file(temp_file_path).unwrap();
+    }
 }
